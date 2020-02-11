@@ -57,6 +57,13 @@ function updateFilmMaker($filmMaker)
 
 
 // ############################## Tests unitaires ####################
+
+// Recharger la base de données pour être sûr à 100% des données de test
+
+$cmd = "mysql -u root -proot < Restore-MCU-PO-Final.sql";
+exec($cmd);
+
+
 echo "Test unitaire de la fonction getAllItems : ";
 $items = getAllFilmMakers();
 if (count($items) == 4)
