@@ -1,0 +1,11 @@
+<?php
+/**
+ * File:
+ * Author: X.Carrel
+ * Date:
+ **/
+$user="toto";
+$pass='totopass';
+$dbhost='localhost';
+$dbname='toto';
+?>
