@@ -99,7 +99,7 @@ else
 }
 echo "\n";
 
-echo "Test unitaire de la fonction renameFilmMaker : ";
+echo "Test unitaire de la fonction updateFilmMaker : ";
 $item = getFilmMakerByName('Chamblon');
 $id = $item['id']; // se souvenir de l'id pour comparer
 $item['firstname'] = 'Gérard';
