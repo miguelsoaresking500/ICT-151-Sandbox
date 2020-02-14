@@ -1,14 +1,19 @@
 <?php
+function getPDO(){
+    require ".constant.php";
+    $dbh = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname, $user, $pass);
+    return $dbh;
+}
 
 function getAllFilmMakers()
 {
-    require ".const.php";
+    require ".constant.php";
     try {
-        $dbh = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname, $user, $pass);
+        getPDO();
         $query = 'SELECT * FROM filmmakers';
-        $statement = $dbh->prepare($query);//prepare query
+        $statement = getPDO()->prepare($query);//prepare query
         $statement->execute();//execute query
-        $queryResult = $statement->fetchAll();//prepare result for client
+        $queryResult = $statement->fetchAll(pdo::FETCH_ASSOC);//prepare result for client
         $dbh = null;
         return $queryResult;
     } catch (PDOException $e) {
@@ -19,13 +24,13 @@ function getAllFilmMakers()
 
 function getFilmMaker($id)
 {
-    require ".const.php";
+    require ".constant.php";
     try {
-        $dbh = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname, $user, $pass);
+        getPDO();
         $query = "SELECT * FROM filmmakers WHERE id=$id";
-        $statment = $dbh->prepare($query);//prepare query
+        $statment = getPDO()->prepare($query);//prepare query
         $statment->execute();//execute query
-        $queryResult = $statment->fetch();//prepare result for client
+        $queryResult = $statment->fetch(pdo::FETCH_ASSOC);//prepare result for client
         $dbh = null;
         return $queryResult;
     } catch (PDOException $e) {
@@ -36,13 +41,13 @@ function getFilmMaker($id)
 
 function getFilmMakerByName ($name)
 {
-    require ".const.php";
+    require ".constant.php";
     try {
-        $dbh = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname, $user, $pass);
-        $query = "SELECT * FROM filmmakers WHERE name='$name'";
-        $statement = $dbh->prepare($query);//prepare query
+        getPDO();
+        $query = "SELECT * FROM filmmakers WHERE lastname='$name'";
+        $statement = getPDO()->prepare($query);//prepare query
         $statement->execute();//execute query
-        $queryResult = $statement->fetch();//prepare result for client
+        $queryResult = $statement->fetch(pdo::FETCH_ASSOC);//prepare result for client
         $dbh = null;
         return $queryResult;
     } catch (PDOException $e) {
@@ -53,14 +58,58 @@ function getFilmMakerByName ($name)
 
 function updateFilmMaker($filmMaker)
 {
+    require ".constant.php";
+    try {
+        getPDO();
+        $query = "UPDATE filmmakers SET filmmakersnumber =:filmmakersnumber, firstname =:firstname, lastname =:lastname, birthname =:birthname, nationality =:nationality  WHERE id=:id";
+        $statement = getPDO()->prepare($query);//prepare query
+        $statement->execute($filmMaker);//execute query
+        $dbh = null;
+        return true;
+    } catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        return null;
+    }
+}
+
+function createFilmMaker($filmMaker)
+{
+    require ".constant.php";
+    try {
+        getPDO();
+        $query = "INSERT INTO filmmakers (filmmakersnumber,firstname,lastname,birthname,nationality)VALUES(131343,'Joe','Dalton',1870,'USA') ";
+        $statement = getPDO()->prepare($query);//prepare query
+        $statement->execute($filmMaker);//execute query
+        $dbh = null;
+        return true;
+    } catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        return null;
+    }
+}
+
+function deleteFilmMaker($filmMaker)
+{
+    require ".constant.php";
+    try {
+        getPDO();
+        $query = "DELETE FROM filmmakers  WHERE  filmmakersnumber =:filmmakersnumber, firstname =:firstname, lastname =:lastname, birthname =:birthname, nationality =:nationality, id=:id";
+        $statement = getPDO()->prepare($query);//prepare query
+        $statement->execute($filmMaker);//execute query
+        $dbh = null;
+        return true;
+    } catch (PDOException $e) {
+        print "Error!: " . $e->getMessage() . "<br/>";
+        return null;
+    }
 }
 
 
 // ############################## Tests unitaires ####################
 
 // Recharger la base de données pour être sûr à 100% des données de test
-
-$cmd = "mysql -u root -proot < Restore-MCU-PO-Final.sql";
+require ".constant.php";
+$cmd = "mysql -u $user -p$pass < Restore-MCU-PO-Final.sql";
 exec($cmd);
 
 
@@ -75,6 +124,7 @@ else
     echo 'BUG !!!';
 }
 echo "\n";
+
 echo "Test unitaire de la fonction getItem : ";
 $item = getFilmMaker(3);
 if ($item['firstname'] == 'Luc-Olivier')
@@ -86,6 +136,8 @@ else
     echo 'BUG !!!';
 }
 echo "\n";
+
+
 
 echo "Test unitaire de la fonction getFilmMakerName : ";
 $item = getFilmMakerByName('Chamblon');
@@ -115,5 +167,17 @@ else
     echo '### BUG ###';
 }
 echo "\n";
+echo "Test unitaire de la fonction createFilmMaker : ";
+$item = createFilmMaker();
+if ($item['firstname'] == 'Joe')
+{
+    echo 'OK !!!';
+}
+else
+{
+    echo 'BUG !!!';
+}
+echo "\n";
+
 
 ?>
