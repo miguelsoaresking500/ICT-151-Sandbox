@@ -89,6 +89,7 @@ function createFilmMaker($filmMakers)
         $query = "INSERT INTO filmmakers (filmmakersnumber,firstname,lastname,birthname,nationality)VALUES(:filmmakersnumber,:firstname,:lastname,:birthname,:nationality) ";
         $statement = getPDO()->prepare($query);//prepare query
         $statement->execute($filmMakers);//execute query
+       // $filmMakers['id']=$dbh -> lastIsertId();
         $dbh = null;
         return true;
     } catch (PDOException $e) {
@@ -102,9 +103,9 @@ function deleteFilmMaker($filmMakers)
     require ".constant.php";
     try {
         getPDO();
-        $query = "DELETE FROM filmmakers  WHERE  filmmakersnumber =:filmmakersnumber, firstname =:firstname, lastname =:lastname, birthname =:birthname, nationality =:nationality, id=:id";
+        $query = "DELETE FROM filmmakers  WHERE id=:id";
         $statement = getPDO()->prepare($query);//prepare query
-        $statement->execute($filmMakers);//execute query
+        $statement->execute([':id'=>$filmMakers]);//execute query
         $dbh = null;
         return true;
     } catch (PDOException $e) {
@@ -112,5 +113,6 @@ function deleteFilmMaker($filmMakers)
         return null;
     }
 }
+
 
 ?>
